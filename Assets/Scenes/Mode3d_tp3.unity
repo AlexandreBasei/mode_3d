@@ -552,7 +552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ex1
   spheres: []
   cubes: []
-  octreeDepth: 5
+  octreeDepth: 7
   cubePrefab: {fileID: 104592056}
   instantiatePrefabs: 1
   drawGizmos: 0
