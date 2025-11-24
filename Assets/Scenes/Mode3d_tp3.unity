@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 104592059}
   - component: {fileID: 104592058}
   - component: {fileID: 104592057}
+  - component: {fileID: 104592060}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -208,6 +209,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &104592060
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104592056}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &148948902
 GameObject:
   m_ObjectHideFlags: 0
@@ -240,11 +262,14 @@ MonoBehaviour:
   spheres:
   - center: {x: -2, y: 2, z: 0}
     radius: 1.5
+    subtract: 0
   - center: {x: 2, y: 2, z: 0}
     radius: 1.5
+    subtract: 0
   cubes:
   - center: {x: 0, y: -1, z: 1}
     size: {x: 5, y: 2, z: 1}
+    subtract: 0
   octreeDepth: 5
   cubePrefab: {fileID: 1062867381}
   instantiatePrefabs: 1
@@ -353,8 +378,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0012582267, y: 0.9980447, z: -0.058760263, w: 0.021272209}
-  m_LocalPosition: {x: 0.32043076, y: 1.2945404, z: 8.9426}
+  m_LocalRotation: {x: 0.0819943, y: 0.8984366, z: -0.19038782, w: 0.38709298}
+  m_LocalPosition: {x: -5.0138855, y: 3.417307, z: 5.0545483}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -561,7 +586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VoxelBrush
   volume: {fileID: 1211296257}
-  radius: 0.5
+  radius: 1
   amountPerSecond: 1
   mode: 0
   toggleModeKey: 32
@@ -643,6 +668,7 @@ GameObject:
   - component: {fileID: 1062867384}
   - component: {fileID: 1062867383}
   - component: {fileID: 1062867382}
+  - component: {fileID: 1062867385}
   m_Layer: 0
   m_Name: Cube (1)
   m_TagString: Untagged
@@ -721,6 +747,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1062867385
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1062867381}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1139662972
 GameObject:
   m_ObjectHideFlags: 0
@@ -737,7 +784,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1139662973
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -751,9 +798,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ex1
   spheres:
+  - center: {x: 0, y: 0, z: 1.5}
+    radius: 1.5
+    subtract: 1
+  - center: {x: 0, y: 1.8, z: -1}
+    radius: 1
+    subtract: 1
+  cubes:
   - center: {x: 0, y: 0, z: 0}
-    radius: 2
-  cubes: []
+    size: {x: 3, y: 3, z: 3}
+    subtract: 0
   octreeDepth: 5
   cubePrefab: {fileID: 104592056}
   instantiatePrefabs: 1
@@ -807,8 +861,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VoxelVolume
   center: {x: 0, y: 0, z: 0}
   size: {x: 4, y: 4, z: 4}
-  voxelSize: 0.25
-  threshold: 0.5
+  voxelSize: 0.1
+  threshold: 0
   voxelPrefab: {fileID: 1062867381}
   autoRebuild: 1
   debugRaycast: 0
