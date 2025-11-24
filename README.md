@@ -1,6 +1,6 @@
 # Modélisation 3D - TP2
 ## Installation
-- Créer un nouveau projet Unity (version >= à 6000.2.3f1)
+- Créer un nouveau projet Unity (version >= à 6000.2.9f1)
 - Importer les fichiers depuis le repo à la racine du projett
 - Ouvrir la scène "Mode3d_tp2" dans le dossier Assets > Scenes
 - Créer un GameObject vide
