@@ -52,7 +52,7 @@ public class Octree : MonoBehaviour
             };
             cubes = new List<Cube>
             {
-                new Cube { center = new Vector3(2.5f,0f,0f), size = Vector3.one * 1.0f }
+                new Cube { center = new Vector3(2.5f,-1f,0f), size = Vector3.one * 1.0f }
             };
         }
 
