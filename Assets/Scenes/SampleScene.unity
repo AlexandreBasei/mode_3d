@@ -162,7 +162,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: f72549887be112e4b98ca29d22d7ccb7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -294,8 +294,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.040604625, y: -0.7042588, z: 0.04039658, w: 0.7076291}
+  m_LocalPosition: {x: 7.8706474, y: 2.6366048, z: -0.1136149}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -550,13 +550,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dd92a13c2a4ae24c8ef87ac4cafd4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ex1
-  origin: {x: 0, y: 0, z: 0}
-  radius: 2
-  octreeDepth: 4
+  spheres: []
+  cubes: []
+  octreeDepth: 5
   cubePrefab: {fileID: 104592056}
   instantiatePrefabs: 1
-  drawGizmos: 1
-  gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  drawGizmos: 0
+  gizmoColor: {r: 0.5764706, g: 0.4392157, b: 0.8588236, a: 1}
+  blendMode: 2
+  minIntersectionCount: 2
 --- !u!4 &1139662974
 Transform:
   m_ObjectHideFlags: 0
