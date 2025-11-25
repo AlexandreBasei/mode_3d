@@ -1,4 +1,4 @@
-# Modélisation 3D - TP2
+# Modélisation 3D - TP3
 ## Installation
 - Créer un nouveau projet Unity (version >= à 6000.2.9f1)
 - Importer les fichiers depuis le repo à la racine du projett
