@@ -14,3 +14,14 @@
     - il est possible d'ajouter des sphères et des cubes manuellement depuis l'inspecteur et de définir leur position et leur taille
     - plusieurs blend modes sont disponibles : union et intersection
 - Lancer le jeu
+
+### Ex 6 : tooling
+Techniquement l'exercice 6 est fait mais il ne permet que d'ajouter et de supprimer des cubes dans une zone restreinte. Pour l'initialiser manuellement :
+- Créer un GameObject vide
+- Ajouter le script "VoxelVolume" au GameObject
+    - Ajouter le cube au VoxelVolume dans l'inspecteur (voxel prefab)
+    - Configurer VoxelVolume (la taille ds voxels par exemple)
+- Créer un autre GameObject vide
+- Lui ajouter le script "VoxelBrush"
+    - La taille du pinceau est ajustable si besoin
+- Lancer le jeu : clic gauche pour peindre et clic droit pour effacer
