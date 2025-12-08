@@ -1,8 +1,9 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,9 +18,12 @@ public class Off_Loader : MonoBehaviour
     [SerializeField] private string offFileName;
 
     [SerializeField] private float epsilonValue = 0.1f;
+    [SerializeField] private bool clustered = false;
+    [SerializeField] private bool drawGizmos = true;
 
     private Bounds box;
     private List<Cluster> clusterGrid = new List<Cluster>();
+    private Dictionary<int, int> vertexWeight = new Dictionary<int, int>();
 
     private MeshFilter mf;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,7 +31,10 @@ public class Off_Loader : MonoBehaviour
     {
         load_off();
         generateMesh();
-        createBox();
+        if (clustered)
+        {
+            createBox();
+        }
     }
 
     // Update is called once per frame
@@ -224,7 +231,7 @@ public class Off_Loader : MonoBehaviour
         int nbCubesY = Mathf.CeilToInt(box.size.y / epsilonValue);
         int nbCubesZ = Mathf.CeilToInt(box.size.z / epsilonValue);
 
-        Vector3 boxMinPoint = box.center - (box.size / 2); //Point inférieur gauche de la boîte
+        Vector3 boxMinPoint = box.center - (box.size / 2);
 
         for (int i = 0; i < nbCubesX; i++)
         {
@@ -242,34 +249,223 @@ public class Off_Loader : MonoBehaviour
                     clusterCube.bounds = cubeBounds;
 
                     clusterGrid.Add(clusterCube);
-
-                    //Debug.Log($"Cube créé - Centre: {clusterCube.center}, Taille: {clusterCube.size}");
                 }
             }
         }
 
-        foreach (Vector3 vertex in mesh.vertices)
+        calculateVertexWeights();
+
+        // ✅ CORRECTION 1 : Compter les sommets hors limites
+        int outOfBoundsCount = 0;
+
+        // Ajout des vertices du mesh dans la clusterGrid
+        for (int i = 0; i < mesh.vertices.Length; i++)
         {
-            Vector3 worldVertex = transform.TransformPoint(vertex);
+            Vector3 worldVertex = transform.TransformPoint(mesh.vertices[i]);
             int indiceX = Mathf.FloorToInt((worldVertex.x - boxMinPoint.x) / epsilonValue);
             int indiceY = Mathf.FloorToInt((worldVertex.y - boxMinPoint.y) / epsilonValue);
             int indiceZ = Mathf.FloorToInt((worldVertex.z - boxMinPoint.z) / epsilonValue);
 
-            if ((indiceX < 0 || indiceY < 0 || indiceZ < 0) || (indiceX > clusterGrid.Count || indiceY > clusterGrid.Count || indiceZ > clusterGrid.Count))
+            if ((indiceX >= 0 && indiceX < nbCubesX) && (indiceY >= 0 && indiceY < nbCubesY) && (indiceZ >= 0 && indiceZ < nbCubesZ))
             {
-                Debug.LogError($"An indice is negative ! indiceX: {indiceX}, indiceY: {indiceY}, indiceZ: {indiceZ}");
+                int index1D = indiceX + indiceY * nbCubesX + indiceZ * nbCubesX * nbCubesY;
+                clusterGrid[index1D].vertices.Add(mesh.vertices[i]);
+                clusterGrid[index1D].vertexIndices.Add(i);
             }
             else
             {
-                int index1D = indiceX + indiceY * nbCubesX + indiceZ * nbCubesX * nbCubesY;
+                outOfBoundsCount++;  // ✅ Juste compter, ne pas logger
             }
         }
+
+        if (outOfBoundsCount > 0)
+        {
+            Debug.LogWarning($"{outOfBoundsCount} sommets hors des limites de la grille (ignorés)");
+        }
+
+        // Calculer le sommet représentatif que l'on va garder
+        foreach (Cluster cluster in clusterGrid)
+        {
+            if (cluster.vertices.Count > 0)
+            {
+                float sumX = 0;
+                float sumY = 0;
+                float sumZ = 0;
+                float totalWeight = 0;
+
+                foreach (int vertexIndex in cluster.vertexIndices)
+                {
+                    int poids = vertexWeight[vertexIndex];
+                    Vector3 sommet = sommets[vertexIndex];
+
+                    sumX += sommet.x * poids;
+                    sumY += sommet.y * poids;
+                    sumZ += sommet.z * poids;
+                    totalWeight += poids;
+                }
+
+                cluster.finalVertice = new Vector3(sumX / totalWeight, sumY / totalWeight, sumZ / totalWeight);
+            }
+        }
+
+        int clustersWithVertices = clusterGrid.Count(c => c.vertexIndices.Count > 0);
+        Debug.Log($"Clusters avec sommets : {clustersWithVertices} / {clusterGrid.Count}");
+        Debug.Log($"Exemple de finalVertice : {clusterGrid.First(c => c.vertexIndices.Count > 0).finalVertice}");
+
+        // ✅ CORRECTION 2 : Créer un mapping pour TOUS les sommets
+        List<Vector3> newVertices = new List<Vector3>();
+        Dictionary<int, int> mapping = new Dictionary<int, int>();
+        int newIndice = 0;
+
+        // D'abord, mapper les sommets qui sont dans des clusters
+        foreach (Cluster cluster in clusterGrid)
+        {
+            if (cluster.vertices.Count > 0)
+            {
+                newVertices.Add(cluster.finalVertice);
+
+                foreach (int oldVertexIndex in cluster.vertexIndices)
+                {
+                    mapping[oldVertexIndex] = newIndice;
+                }
+                newIndice++;
+            }
+        }
+
+        // ✅ CORRECTION 3 : Gérer les sommets non mappés
+        // Pour les sommets qui n'ont pas été assignés à un cluster, les garder tels quels
+        for (int i = 0; i < sommets.Count; i++)
+        {
+            if (!mapping.ContainsKey(i))
+            {
+                // Ajouter le sommet original
+                newVertices.Add(sommets[i]);
+                mapping[i] = newIndice;
+                newIndice++;
+            }
+        }
+
+        Debug.Log($"Sommets originaux : {sommets.Count} -> Nouveaux sommets : {newVertices.Count}");
+        Debug.Log($"Mapping créé pour {mapping.Count} sommets");
+
+        // Reconstruire les facettes
+        List<int[]> newFacettes = new List<int[]>();
+        int facettesDegenerees = 0;
+
+        foreach (int[] facette in facettes)
+        {
+            int[] newFacette = new int[3];
+
+            for (int i = 0; i < 3; i++)
+            {
+                int oldIndice = facette[i];
+                newFacette[i] = mapping[oldIndice];  // ✅ Plus d'erreur car tous les sommets sont mappés
+            }
+
+            if ((newFacette[0] != newFacette[1]) && (newFacette[0] != newFacette[2]) && (newFacette[1] != newFacette[2]))
+            {
+                newFacettes.Add(newFacette);
+            }
+            else
+            {
+                facettesDegenerees++;
+            }
+        }
+
+        Debug.Log($"Facettes originales : {facettes.Count} → Nouvelles facettes : {newFacettes.Count}");
+        Debug.Log($"Triangles dégénérés supprimés : {facettesDegenerees}");
+
+        // Mettre à jour les données du mesh
+        sommets = newVertices;
+        facettes = newFacettes;
+
+        // ✅ CORRECTION 4 : Recalculer les normales
+        calculateNormals();
+
+        // Régénérer le mesh simplifié
+        generateMesh();
+
+        Debug.Log("Mesh simplifié régénéré !");
+    }
+
+    private void calculateVertexWeights()
+    {
+        // Initialiser tous les sommets à 0
+        for (int i = 0; i < sommets.Count; i++)
+        {
+            vertexWeight[i] = 0;
+        }
+
+        //  Parcourir les facettes et augmenter le poid des sommets utilisés
+        foreach (var facette in facettes)
+        {
+            for (int i = 0; i < facette.Length; i++)
+            {
+                vertexWeight[facette[i]]++;
+            }
+        }
+
+        // Remplacer les poids de 0 par 1 (pour éviter division par zéro)
+        for (int i = 0; i < sommets.Count; i++)
+        {
+            if (vertexWeight[i] == 0)
+            {
+                vertexWeight[i] = 1;
+            }
+        }
+
+        Debug.Log($"Poids calculés pour {vertexWeight.Count} sommets");
+    }
+
+    private void calculateNormals()
+    {
+        Vector3[] vertexNormals = new Vector3[sommets.Count];
+        int[] normalCounts = new int[sommets.Count];
+
+        // Calculer les normales par facette et les accumuler
+        for (int i = 0; i < facettes.Count; i++)
+        {
+            int[] face = facettes[i];
+
+            Vector3 v0 = sommets[face[0]];
+            Vector3 v1 = sommets[face[1]];
+            Vector3 v2 = sommets[face[2]];
+
+            Vector3 edge1 = v1 - v0;
+            Vector3 edge2 = v2 - v0;
+            Vector3 faceNormal = Vector3.Cross(edge1, edge2);
+
+            // Accumuler la normale pour chaque sommet de la face
+            for (int j = 0; j < face.Length; j++)
+            {
+                int idx = face[j];
+                vertexNormals[idx] += faceNormal;
+                normalCounts[idx]++;
+            }
+        }
+
+        // Moyenner et normaliser
+        normales.Clear();
+        for (int i = 0; i < sommets.Count; i++)
+        {
+            if (normalCounts[i] > 0)
+            {
+                Vector3 averagedNormal = vertexNormals[i] / normalCounts[i];
+                normales.Add(averagedNormal.normalized);
+            }
+            else
+            {
+                normales.Add(Vector3.up);
+            }
+        }
+
+        Debug.Log($"Normales recalculées : {normales.Count}");
     }
 
     private void OnDrawGizmos()
     {
         // Bounds est un struct, donc on vérifie si la taille est non-nulle
-        if (box.size != Vector3.zero)
+        if (box.size != Vector3.zero && drawGizmos)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(box.center, box.size);
