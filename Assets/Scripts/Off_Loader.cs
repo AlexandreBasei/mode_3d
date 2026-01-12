@@ -14,13 +14,14 @@ public class Off_Loader : MonoBehaviour
     private List<int[]> facettes = new List<int[]>();
     private List<Vector3> normales = new List<Vector3>();
     [SerializeField] private string offFileName;
+    [SerializeField] private bool activateLoop = false;
+    [SerializeField] private int loopIterations = 1;
 
     private MeshFilter mf;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         load_off();
-        recalculerNormales(); // Ajouter cette ligne après load_off (qui appelle applyLoop)
         generateMesh();
     }
 
@@ -141,7 +142,16 @@ public class Off_Loader : MonoBehaviour
             }
         }
 
-        applyLoop();
+
+        if (activateLoop)
+        {
+            for (int i = 0; i < loopIterations; i++)
+            {
+                applyLoop();
+                Debug.Log("loop iteration");
+            }
+            recalculerNormales();
+        }
     }
 
     private void recalculerNormales()
