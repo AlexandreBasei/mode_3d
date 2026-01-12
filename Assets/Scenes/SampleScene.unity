@@ -206,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.283, y: 0.524, z: -2.897}
+  m_LocalPosition: {x: 3.486, y: 0.524, z: -5.028}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -519,7 +519,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25b3691f9c398fc4898ad27a0d779e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Off_Loader
-  offFileName: bunny
+  offFileName: bunny_simplified
   activateLoop: 0
   loopIterations: 1
 --- !u!4 &1492789829
@@ -531,7 +531,7 @@ Transform:
   m_GameObject: {fileID: 1492789825}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
-  m_LocalPosition: {x: 3.297, y: 0, z: 0.89}
+  m_LocalPosition: {x: 3.68, y: 0, z: -2.283}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -614,7 +614,7 @@ Transform:
   m_GameObject: {fileID: 1726369770}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
-  m_LocalPosition: {x: 5.239, y: 0, z: 0.89}
+  m_LocalPosition: {x: 5.6219997, y: 0, z: -2.187}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -632,9 +632,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25b3691f9c398fc4898ad27a0d779e25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Off_Loader
-  offFileName: bunny
+  offFileName: bunny_simplified
   activateLoop: 1
-  loopIterations: 2
+  loopIterations: 3
 --- !u!23 &1726369773
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -699,5 +699,5 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1503808462}
-  - {fileID: 1726369771}
   - {fileID: 1492789829}
+  - {fileID: 1726369771}

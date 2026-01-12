@@ -38,7 +38,7 @@ public class Off_Loader : MonoBehaviour
         //Lire le fichier
         string[] lines = File.ReadAllLines(filePath);
 
-        if (lines[0] != "OFF")
+        if ((lines[0] != "OFF") && (lines[0] != "NOFF"))
         {
             Debug.LogError("Le fichier n'est pas au format OFF");
             return;

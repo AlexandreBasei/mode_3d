@@ -19,9 +19,7 @@ public class Chaikin : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        shape1 = new List<Vector3> { a, b, c, d };
-
-        applyChaikin(shape1, chaikinIterations);
+      
     }
 
     // Update is called once per frame
@@ -32,6 +30,10 @@ public class Chaikin : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        shape1 = new List<Vector3> { a, b, c, d };
+
+        applyChaikin(shape1, chaikinIterations);
+
         Gizmos.color = Color.red;
         if (shape1.Count > 0) { 
             for (int i = 0; i < shape1.Count; i++)
