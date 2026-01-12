@@ -7,4 +7,4 @@
 
 Sur la gauche de l'écran, on voit le résultat de la subdivision avec l'algorithme de Chaikin
 
-Ensuite, le lapin de gauche est celui d'origine et celui de droite est subdivisé avec loop. On peut observer que celui de droite est légèrement plus détaillé.
+Ensuite, le lapin de gauche est celui d'origine et celui de droite est subdivisé avec loop. On peut observer que celui de droite est légèrement plus "lisse".
